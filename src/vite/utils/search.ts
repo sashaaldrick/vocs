@@ -41,7 +41,9 @@ export async function buildIndex({
         const pageCache = cache.get(key) ?? {}
         if (pageCache.mdx === mdx) return pageCache.document
 
-        const html = await processMdx(pagePath, mdx, { rehypePlugins })
+        const mdxNoImports = mdx.replace(/^(import|export).*/gm, '')
+        const mdxNoComponents = mdxNoImports.replace(/<\/?\s*[A-Z][^>]*>/g, '')
+        const html = await processMdx(pagePath, mdxNoComponents, { rehypePlugins })
 
         const sections = splitPageIntoSections(html)
         if (sections.length === 0) {
